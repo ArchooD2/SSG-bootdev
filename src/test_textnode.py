@@ -66,6 +66,12 @@ class TestTextNode(unittest.TestCase):
                         url="https://example.com",
                     )
 
+    def test_url_required(self):
+        for text_type in (TextType.LINK, TextType.IMAGE):
+            with self.subTest(text_type=text_type):
+                with self.assertRaises(ValueError):
+                    TextNode("text", text_type)
+
 class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_text(self):
         node = TextNode("This is a text node", TextType.TEXT)
@@ -152,6 +158,12 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             text_node_to_html_node(node)
+    
+    def test_text_to_html(self):
+        node = TextNode("raw text", TextType.TEXT)
+        html_node = text_node_to_html_node(node)
+    
+        self.assertEqual(html_node.to_html(), "raw text")
 
 
 if __name__ == "__main__":

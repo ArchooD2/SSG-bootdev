@@ -1,2 +1,5 @@
 #!/bin/sh
-python3 src/main.py
+
+python3 src/main.py || exit 1
+cd public || exit 1
+python3 -m http.server 8888
