@@ -168,7 +168,42 @@ class TestGeneratePage(unittest.TestCase):
             self.assertTrue(
                 os.path.isfile(destination_path)
             )
-
+    def test_generate_page_with_basepath(self):
+        with tempfile.TemporaryDirectory() as temp_directory:
+            markdown_path = os.path.join(temp_directory, "page.md")
+            template_path = os.path.join(temp_directory, "template.html")
+            destination_path = os.path.join(
+                temp_directory,
+                "docs",
+                "index.html",
+            )
+    
+            with open(markdown_path, "w", encoding="utf-8") as file:
+                file.write(
+                    "# Test Page\n\n"
+                    "![Image](/images/test.png)\n\n"
+                    "[Home](/)"
+                )
+    
+            with open(template_path, "w", encoding="utf-8") as file:
+                file.write(
+                    '<link href="/index.css">'
+                    "{{ Content }}"
+                )
+    
+            generate_page(
+                markdown_path,
+                template_path,
+                destination_path,
+                "/SSG/",
+            )
+    
+            with open(destination_path, "r", encoding="utf-8") as file:
+                html = file.read()
+    
+            self.assertIn('href="/SSG/index.css"', html)
+            self.assertIn('src="/SSG/images/test.png"', html)
+            self.assertIn('href="/SSG/"', html)
 
 if __name__ == "__main__":
     unittest.main()
